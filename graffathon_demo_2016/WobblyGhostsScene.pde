@@ -1,23 +1,23 @@
 class WobblyGhostsScene extends Scene {
-  public PShader shader;
+  public PGraphics pg;
+  public ShaderScene initialScene;
+  public PShader postShader;
   
   public WobblyGhostsScene(float duration) {
     super(duration);
-    this.shader = loadShader("wobbly-ghosts.frag");
-    shader(this.shader);
+    this.pg = createGraphics(width, height, P3D);
+    this.initialScene = new ShaderScene(duration, "wobbly-ghosts.frag", this.pg);
+    this.initialScene.feedback = true;
+    this.postShader = loadShader("invert.frag");
   }
   
   public void setup() {
-    fill(255);
-    rectMode(CORNER);
+    this.initialScene.setup();
   }
   
   public void draw(float beats) {
-    clear();
-    shader(this.shader);
-    this.shader.set("iResolution", float(width), float(height));
-    this.shader.set("iBeats", beats);
-    this.shader.set("iGlobalTime", beatsToSecs(beats));
-    rect(0, 0, width, height);
+    this.initialScene.draw(beats);
+    
+    image(this.pg, 0, 0);    
   }
 }

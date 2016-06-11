@@ -13,11 +13,13 @@ uniform float iGlobalTime;
 uniform float iBeats;
 #endif
 
+uniform sampler2D in_image;
 out vec4 out_color;
 
 #define TAU 6.283185307179586
 #define PI 3.141592653589793
 
+#define DURATION 32.0
 #define CORNERS 6
 
 #define NO_MATERIAL 0
@@ -25,12 +27,10 @@ out vec4 out_color;
 #define EYE_MATERIAL 2
 #define TUNNEL_MATERIAL 4
 
-#define THRESHOLD 0.0003
-#define MAX_STEP 0.2
-#define SHADOW_THRESHOLD 0.01
+#define THRESHOLD 0.001
+#define MAX_STEP 1.0
 #define MAX_ITERATIONS 256
-#define MAX_SHADOW_ITERATIONS 32
-#define NORMAL_DELTA 0.02
+#define NORMAL_DELTA 0.05
 #define MAX_DEPTH 60.0
 
 float scale(float l0, float r0, float l1, float r1, float x) {
@@ -245,10 +245,10 @@ vec3 focus() {
     return vec3(0.0, 8.0*iGlobalTime, 0.0);
 }
 
-ObjectDistance ghost(vec3 p) {
-    float wobble_t_rate = 3.0;
-    float wobble_s_rate = 4.0;
-    float wobble_depth = 0.05;
+ObjectDistance ghost(float wave, vec3 p) {
+    float wobble_t_rate = 4.0;
+    float wobble_s_rate = scale(0.0, 1.0, 4.0, 25.0, wave);
+    float wobble_depth = scale(0.0, 1.0, 0.05, 0.02, wave);
     vec3 q = p + vec3(wobble_depth*sin(wobble_t_rate*iGlobalTime + wobble_s_rate*p.y), 0.3, 0.0);
     ObjectDistance od = body(q);
     
@@ -294,11 +294,16 @@ ObjectDistance sceneDistance(vec3 p) {
         
         vec2 trans_xz = polar2rect(vec2(rot, 2.0));
         
-        vec3 q2 = q_rot + vec3(0.0, 0.5*sin(iGlobalTime + rot), -2.0);
+        float wave1 = sin(iBeats * TAU/3.0 + 0.25*TAU + rot);
+        vec3 q2 = q_rot + vec3(0.0, 0.5*wave1, -2.0);
+        float wave2 = pow(scale(
+            -1.0, 1.0, 0.0, 1.0,
+            sin(0.25 * iBeats * TAU)
+        ), 51.0);
         
         od = distanceUnion(
             od,
-            ghost(q2)
+            ghost(wave2, q2)
         );
     }
     
@@ -326,7 +331,6 @@ MarchResult march(vec3 origin, vec3 direction) {
         }
         
         result.length += min(MAX_STEP, result.distance * (1.0 - 0.5*THRESHOLD));
-        //result.length += result.distance * (1.0 - 0.5*THRESHOLD);
     }
 
     if(result.length > MAX_DEPTH) {
@@ -342,18 +346,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 camXZ = polar2rect(vec2(-TAU/4.0 + 0.3 * iGlobalTime, 3.0));
     
     float cam_r = 3.0;
-    float cam_theta = 0.5*iGlobalTime;
+    float cam_theta = iBeats * TAU / CORNERS;
     
     vec2 cam_pos_xz_polar = vec2(cam_theta, cam_r);
     vec2 cam_pos_xz = polar2rect(cam_pos_xz_polar);
     
     vec3 camPos = focus() + vec3(cam_pos_xz.x, 2.0, cam_pos_xz.y);
-    
-  	/*
-    vec3 camPos = vec3(camXZ.x, 1.0 + 0.7 * sin(1.0 * iGlobalTime), camXZ.y);
-    camPos = focus() + vec3(2.0*sin(0.6*iGlobalTime), 2.0, -3.0);
-    */
-    
+        
     vec3 camLook = focus();
     
     vec3 camUp = vec3(0.0, 1.0, 0.0); 
@@ -391,7 +390,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
                 rayEnd.y * s_proj * 20.0
             );
             
-            baseColor = 0.2 + 0.5 * multi_eyes(p_proj).xyz;
+            float i_16th = 0.25 * floor(fract(iBeats) * 4.0);
+            float ramp_16th = 1.0 - fract(iBeats*4.0);
+            
+            vec3 color0 = 0.2 + vec3(0.5 * i_16th * ramp_16th, 0.0, 0.0);
+            
+            baseColor = color0 + 0.5 * multi_eyes(p_proj).xyz;
         }
         
         float deltaTwice = 2.0 * NORMAL_DELTA;
@@ -404,7 +408,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
             (sceneDistance(rayEnd + dz).distance) / NORMAL_DELTA
         ));
 
-       	vec2 lightXZ = polar2rect(vec2(-0.5 * iGlobalTime, 3.0));
         vec3 lightPos = camPos + vec3(0.0, 4.0, 0.0);
         
         float ambient = 0.2;
@@ -412,11 +415,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
         float specular = (is_specular ? 1.0 : 0.0) * pow(diffuse, 16.0);
 
         color = ((ambient + diffuse) * baseColor + specular) * (1.0 - mr.length * 0.01);
-        //color = vec3(rayIterations / MAX_TRACE_ITERATIONS, 0.0, shadow);
     }
-        
-	//color = mix(vec3(0.0), vec3(0.0, 1.0, 0.0), float(mr.iterations)/float(MAX_ITERATIONS));
-    
+            
     fragColor = vec4(color, 1.0);
 }
 
@@ -424,5 +424,9 @@ void main() {
     vec4 fragColor = vec4(0.0, 0.0, 0.0, 1.0);
     vec2 fragCoord = gl_FragCoord.xy;
     mainImage(fragColor, fragCoord);
-    out_color = fragColor;
+    
+    vec3 tex_color = texture(in_image, fragCoord / iResolution.xy).xyz;
+    float blend = min(0.99, pow(iBeats / DURATION,mä, 0.5));
+    vec3 raw_color = blend * tex_color + (1.0-blend) * fragColor.xyz;
+    out_color = vec4(raw_color, 1.0);
 }
