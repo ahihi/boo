@@ -79,16 +79,41 @@ class CubeSpidersScene extends Scene {
     float legEnd = legStart + 1.0;
     float legProgress = max(0.0, min(1.0, scale(legStart, legEnd, 0.0, 1.0, beats)));
     
+    float b_snares = 32.0;
+    float b_disrupt_start = b_snares + 9.0;
+    float b_disrupt_low = b_disrupt_start + 3.0;
+    float b_disrupt_end = b_disrupt_low + 4.0;
+    float b_hihats = b_disrupt_end;
+    float b_noise = b_hihats + 8.0;
+    float b_roll = b_noise + 6.0;
+    
+    float disrupt_wave = 0.0;
+    if(b_disrupt_start <= beats && beats < b_disrupt_low) {
+      disrupt_wave = scale(b_disrupt_start, b_disrupt_low, 0.0, 1.0, beats);
+    } else if(b_disrupt_low <= beats && beats < b_disrupt_end) {
+      disrupt_wave = scale(b_disrupt_low, b_disrupt_end, 1.0, 0.0, beats);
+    }
+    disrupt_wave = sin_in_out(disrupt_wave, 2.0);
+    
+    float progress_hh = max(0.0, min(1.0, scale(b_hihats, b_hihats + 1.0, 0.0, 1.0, beats)));
+    
+    float progress_noise = max(0.0, min(1.0, scale(b_noise, this.duration, 0.0, 1.0, beats)));
+    float progress_roll = max(0.0, min(1.0, scale(b_roll, this.duration, 0.0, 1.0, beats)));
+    
     this.pg.beginDraw();
     
     //this.pg.clear();
     
     this.shiftyScene.setup();
     this.pg.hint(DISABLE_DEPTH_TEST);
-    this.shiftyScene.shader.set("progress", legProgress);
+    this.shiftyScene.shader.set("progress_sd", legProgress);
+    this.shiftyScene.shader.set("progress_noise", progress_noise);
+    this.shiftyScene.shader.set("progress_roll", progress_roll);
+    this.shiftyScene.shader.set("disrupt_wave", disrupt_wave);
     this.shiftyScene.draw(beats);
     
     this.pg.hint(ENABLE_DEPTH_TEST);
+    float z_wave = pow(max(0.0, min(1.0, scale(b_hihats, b_hihats + 16.0, 0.0, 1.0, beats))), 2.0);
     this.pg.camera(
       this.boxCenter.x, this.boxCenter.y, this.boxCenter.z + 2.0*this.boxRadius,
       this.boxCenter.x, this.boxCenter.y, this.boxCenter.z,
@@ -113,23 +138,32 @@ class CubeSpidersScene extends Scene {
     this.pg.lightSpecular(0, 0, 0);
     
     float minTransY = -this.boxRadius*2.0;
-    float maxTransY = -minTransY;
+    float maxTransY = this.boxCenter.y;
     
-    float baseY = scale(
-      0.0, this.duration,
-      minTransY, maxTransY,
-      beats
-    );
-        
+    float baseY;
+    if(beats < b_snares) {
+      baseY = scale(
+        0.0, this.duration,
+        minTransY, maxTransY,
+        2.0*beats
+      );
+    } else {
+      baseY = maxTransY;
+    }
+                
     for(Spider spider : this.spiders) {
       float transY = baseY + spider.trans.y;
+      
+      float x_sign = spider.trans.x < 0.0 ? -1.0 : 1.0;
+      float x_move = 2.0*x_sign * z_wave;
+      float z_move = 4.0*z_wave;
       
       // String
       
       this.pg.stroke(255);
       
-      float lineX = this.boxCenter.x - spider.trans.x;
-      float lineZ = this.boxCenter.z + spider.trans.z;
+      float lineX = this.boxCenter.x - spider.trans.x - x_move;
+      float lineZ = this.boxCenter.z + spider.trans.z + z_move;
       this.pg.line(
         lineX, -minTransY, lineZ,
         lineX, -transY, lineZ
@@ -141,10 +175,10 @@ class CubeSpidersScene extends Scene {
       
       // Cube      
       
-      this.pg.translate(-spider.trans.x, -transY, spider.trans.z);
+      this.pg.translate(-spider.trans.x - x_move, -transY, spider.trans.z + z_move);
       this.pg.rotateY(0.25*PI * sin(beats + spider.rotPhase));
       //box(2.0*spiderRadius);
-      this.spiderBox(2.0*spiderRadius, legProgress, beats);
+      this.spiderBox(2.0*spiderRadius, legProgress, progress_hh, beats);
       
       // Legs
       
@@ -194,12 +228,13 @@ class CubeSpidersScene extends Scene {
     this.pg.endDraw();
   }
   
-  private void spiderBox(float side, float eyeProgress, float beats) {
+  private void spiderBox(float side, float eyeProgress, float progress_hh, float beats) {
     float halfSide = 0.5*side;
     
     this.pg.shader(this.spiderShader);
 
     this.spiderShader.set("eyeProgress", eyeProgress);
+    this.spiderShader.set("progress_hh", progress_hh);
     this.spiderShader.set("iBeats", beats);
 
     this.spiderShader.set("eye", true);

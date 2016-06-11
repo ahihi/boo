@@ -14,12 +14,13 @@ uniform float iBeats;
 #endif
 
 uniform sampler2D in_image;
+uniform float ghosting;
+uniform float eyeing;
 out vec4 out_color;
 
 #define TAU 6.283185307179586
 #define PI 3.141592653589793
 
-#define DURATION 32.0
 #define CORNERS 6
 
 #define NO_MATERIAL 0
@@ -395,7 +396,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
             
             vec3 color0 = 0.2 + vec3(0.5 * i_16th * ramp_16th, 0.0, 0.0);
             
-            baseColor = color0 + 0.5 * multi_eyes(p_proj).xyz;
+            float k_eyes = scale(0.0, 1.0, 0.0, 0.5, pow(eyeing, 0.5));
+            baseColor = color0 + k_eyes * multi_eyes(p_proj).xyz;
         }
         
         float deltaTwice = 2.0 * NORMAL_DELTA;
@@ -426,7 +428,7 @@ void main() {
     mainImage(fragColor, fragCoord);
     
     vec3 tex_color = texture(in_image, fragCoord / iResolution.xy).xyz;
-    float blend = min(0.99, pow(iBeats / DURATION, 0.5));
+    float blend = min(0.99, pow(ghosting, 0.5));
     vec3 raw_color = blend * tex_color + (1.0-blend) * fragColor.xyz;
     out_color = vec4(raw_color, 1.0);
 }
