@@ -1,9 +1,11 @@
 class SpiderWebScene extends Scene {
   public int amountOfSectors;
   public int sizeOfWeb = 10;
-  public float distanceBetween = 100;
+  public float distanceBetween = 40;
   public PVector origin;
   public float sectorLength;
+  
+  public PShader metaballShader;
   
   public SpiderWebScene(float duration) {
     super(duration);
@@ -14,9 +16,13 @@ class SpiderWebScene extends Scene {
   }
   
   void setup() {
-    resetShader();
-    noStroke();
-    fill(255);    
+    resetShader(); //<>//
+    noStroke(); //<>//
+    fill(255);
+    rectMode(CENTER);
+    
+    metaballShader = loadShader("metaball_small.glsl");
+    shader(metaballShader);
   }
   
   void draw(float beats) {
@@ -26,8 +32,16 @@ class SpiderWebScene extends Scene {
     
     pushMatrix();
 
-    translate(width/2, height/2, -0.5*width);
+    translate(width/2, height/2, 0);
     
+    // metaball shader:
+    shader(metaballShader);
+    metaballShader.set("iResolution", float(width), float(height));
+    metaballShader.set("iGlobalTime", beatsToSecs(beats));
+    rect(0, 0, width, height);
+    
+    
+    // spider web:
     stroke(126);
     fill(255);
     
@@ -40,7 +54,7 @@ class SpiderWebScene extends Scene {
       popMatrix();
     }
     
-    float speed = beats * amountOfSectors;
+    float speed = 0.5 * beats * amountOfSectors;
     
     float currentMaxDistance = distanceBetween * (1 + (int)(speed / amountOfSectors));
     
