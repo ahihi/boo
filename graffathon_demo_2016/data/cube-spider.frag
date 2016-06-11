@@ -23,8 +23,9 @@ out vec4 out_color;
 
 #define EYE_WIDTH 0.7
 #define EYE_HEIGHT 0.4
-#define IRIS_RADIUS 0.3
-#define PUPIL_RADIUS 0.2
+#define IRIS_RADIUS 0.38
+#define PUPIL_RADIUS_MIN 0.2
+#define PUPIL_RADIUS_MAX 0.3
 
 void main() {
     vec3 color0 = vertColor.xyz;
@@ -33,10 +34,14 @@ void main() {
       vec2 p_tex = vertTexCoord.xy * vec2(2.0) - vec2(1.0);
       
       if(length(p_tex / vec2(EYE_WIDTH, eyeProgress * EYE_HEIGHT)) < 1.0) {    
-        if(length(p_tex) < PUPIL_RADIUS) {
+        if(length(p_tex) < mix(PUPIL_RADIUS_MIN, PUPIL_RADIUS_MAX, fract(iBeats))) {
           color0 = vec3(0.0);
         } else if(length(p_tex) < IRIS_RADIUS) {
-          color0 = vec3(1.0, 0.0, 0.0);
+          color0 = mix(
+            vec3(1.0, 0.0, 0.0),
+            vec3(0.5),
+            fract(iBeats)
+          );
         } else {
           color0 = vec3(1.0);
         }

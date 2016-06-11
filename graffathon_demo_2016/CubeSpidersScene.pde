@@ -22,6 +22,7 @@ class CubeSpidersScene extends Scene {
   private Spider[] spiders;
   
   private PGraphics pg;
+  private ShaderScene shiftyScene;
   private PShader spiderShader;
   
   public CubeSpidersScene(float duration) {
@@ -64,38 +65,52 @@ class CubeSpidersScene extends Scene {
     }
     
     this.pg = g;
+    this.shiftyScene = new ShaderScene(this.duration, "shifty.frag", this.pg);
+    this.shiftyScene.beginAndEnd = false;
     this.spiderShader = loadShader("cube-spider.frag", "cube-spider.vert");
   }
   
   public void setup() {
-    camera(
+    this.pg.noStroke();
+  }
+  
+  public void draw(float beats) {
+    float legStart = 0.5 * this.duration;
+    float legEnd = legStart + 1.0;
+    float legProgress = max(0.0, min(1.0, scale(legStart, legEnd, 0.0, 1.0, beats)));
+    
+    this.pg.beginDraw();
+    
+    //this.pg.clear();
+    
+    this.shiftyScene.setup();
+    this.pg.hint(DISABLE_DEPTH_TEST);
+    this.shiftyScene.shader.set("progress", legProgress);
+    this.shiftyScene.draw(beats);
+    
+    this.pg.hint(ENABLE_DEPTH_TEST);
+    this.pg.camera(
       this.boxCenter.x, this.boxCenter.y, this.boxCenter.z + 2.0*this.boxRadius,
       this.boxCenter.x, this.boxCenter.y, this.boxCenter.z,
       0.0, -1.0, 0.0
     );
     float aspect = (float)width/height;
-    perspective(
+    this.pg.perspective(
       PI/5, aspect,
       this.boxCenter.z + this.boxRadius, this.boxCenter.z - this.boxRadius
     );
     
-    noStroke();
-    fill(64, 64, 64);
-    //noFill();
-  }
-  
-  public void draw(float beats) {
-    clear();
+    this.pg.fill(64);
+        
+    this.pg.ambientLight(64, 64, 64);
     
-    ambientLight(64, 64, 64);
-    
-    pointLight(
+    this.pg.pointLight(
       255, 255, 255,
       this.boxCenter.x, this.boxCenter.y - this.boxRadius, this.boxCenter.z + this.boxRadius
     );
     
-    lightFalloff(1, 0, 0);
-    lightSpecular(0, 0, 0);
+    this.pg.lightFalloff(1, 0, 0);
+    this.pg.lightSpecular(0, 0, 0);
     
     float minTransY = -this.boxRadius*2.0;
     float maxTransY = -minTransY;
@@ -105,33 +120,29 @@ class CubeSpidersScene extends Scene {
       minTransY, maxTransY,
       beats
     );
-    
-    float legStart = 0.5 * this.duration;
-    float legEnd = legStart + 1.0;
-    float legProgress = max(0.0, min(1.0, scale(legStart, legEnd, 0.0, 1.0, beats)));
-    
+        
     for(Spider spider : this.spiders) {
       float transY = baseY + spider.trans.y;
       
       // String
       
-      stroke(255);
+      this.pg.stroke(255);
       
       float lineX = this.boxCenter.x - spider.trans.x;
       float lineZ = this.boxCenter.z + spider.trans.z;
-      line(
+      this.pg.line(
         lineX, -minTransY, lineZ,
         lineX, -transY, lineZ
       );
     
-      noStroke();
+      this.pg.noStroke();
 
-      pushMatrix();      
+      this.pg.pushMatrix();      
       
       // Cube      
       
-      translate(-spider.trans.x, -transY, spider.trans.z);
-      rotateY(0.25*PI * sin(beats + spider.rotPhase));
+      this.pg.translate(-spider.trans.x, -transY, spider.trans.z);
+      this.pg.rotateY(0.25*PI * sin(beats + spider.rotPhase));
       //box(2.0*spiderRadius);
       this.spiderBox(2.0*spiderRadius, legProgress, beats);
       
@@ -154,89 +165,91 @@ class CubeSpidersScene extends Scene {
           
           float legPhase = (float)i / LEGS_PER_SIDE * 2.0 * PI;
             
-          for(int j = 0; j < 2; j++) {
+          for(int j = 0; j < 2; j++) {            
             float xSign = j < 1 ? 1.0 : -1.0;
           
-            pushMatrix();
+            this.pg.pushMatrix();
           
-            translate(
+            this.pg.translate(
               xSign * this.spiderRadius,
               -this.spiderRadius,
               legTransZ
             );
-            rotateZ(-xSign * (0.125*PI + 0.2 * sin(beats * PI + legPhase)));
-            rotateY(xSign * legFan);
-            box(
+            this.pg.rotateZ(-xSign * (0.125*PI + 0.2 * sin(beats * PI + legPhase)));
+            this.pg.rotateY(xSign * legFan);
+            this.pg.box(
               legProgress * xSign * 2.0*this.legLength,
               this.legRadius,
               this.legRadius
             );
           
-            popMatrix();
+            this.pg.popMatrix();
           }
         }
       }
       
-      popMatrix();
+      this.pg.popMatrix();
     }
+        
+    this.pg.endDraw();
   }
   
   private void spiderBox(float side, float eyeProgress, float beats) {
     float halfSide = 0.5*side;
     
-    shader(this.spiderShader);
+    this.pg.shader(this.spiderShader);
 
     this.spiderShader.set("eyeProgress", eyeProgress);
     this.spiderShader.set("iBeats", beats);
 
     this.spiderShader.set("eye", true);
-    beginShape(QUADS);
+    this.pg.beginShape(QUADS);
         
     // +Z "front" face
-    vertex(-halfSide, -halfSide,  halfSide, 0, 0);
-    vertex( halfSide, -halfSide,  halfSide, 1, 0);
-    vertex( halfSide,  halfSide,  halfSide, 1, 1);
-    vertex(-halfSide,  halfSide,  halfSide, 0, 1);
+    this.pg.vertex(-halfSide, -halfSide,  halfSide, 0, 0);
+    this.pg.vertex( halfSide, -halfSide,  halfSide, 1, 0);
+    this.pg.vertex( halfSide,  halfSide,  halfSide, 1, 1);
+    this.pg.vertex(-halfSide,  halfSide,  halfSide, 0, 1);
 
-    endShape();
+    this.pg.endShape();
     
-    shader(this.spiderShader);
+    this.pg.shader(this.spiderShader);
     
     this.spiderShader.set("eye", false);
-    beginShape(QUADS);
+    this.pg.beginShape(QUADS);
 
     // -Z "back" face
-    vertex( halfSide, -halfSide, -halfSide, 0, 0);
-    vertex(-halfSide, -halfSide, -halfSide, 1, 0);
-    vertex(-halfSide,  halfSide, -halfSide, 1, 1);
-    vertex( halfSide,  halfSide, -halfSide, 0, 1);
+    this.pg.vertex( halfSide, -halfSide, -halfSide, 0, 0);
+    this.pg.vertex(-halfSide, -halfSide, -halfSide, 1, 0);
+    this.pg.vertex(-halfSide,  halfSide, -halfSide, 1, 1);
+    this.pg.vertex( halfSide,  halfSide, -halfSide, 0, 1);
     
     // +Y "bottom" face
-    vertex(-halfSide,  halfSide,  halfSide, 0, 0);
-    vertex( halfSide,  halfSide,  halfSide, 1, 0);
-    vertex( halfSide,  halfSide, -halfSide, 1, 1);
-    vertex(-halfSide,  halfSide, -halfSide, 0, 1);
+    this.pg.vertex(-halfSide,  halfSide,  halfSide, 0, 0);
+    this.pg.vertex( halfSide,  halfSide,  halfSide, 1, 0);
+    this.pg.vertex( halfSide,  halfSide, -halfSide, 1, 1);
+    this.pg.vertex(-halfSide,  halfSide, -halfSide, 0, 1);
 
     // -Y "top" face
-    vertex(-halfSide, -halfSide, -halfSide, 0, 0);
-    vertex( halfSide, -halfSide, -halfSide, 1, 0);
-    vertex( halfSide, -halfSide,  halfSide, 1, 1);
-    vertex(-halfSide, -halfSide,  halfSide, 0, 1);
+    this.pg.vertex(-halfSide, -halfSide, -halfSide, 0, 0);
+    this.pg.vertex( halfSide, -halfSide, -halfSide, 1, 0);
+    this.pg.vertex( halfSide, -halfSide,  halfSide, 1, 1);
+    this.pg.vertex(-halfSide, -halfSide,  halfSide, 0, 1);
 
     // +X "right" face
-    vertex( halfSide, -halfSide,  halfSide, 0, 0);
-    vertex( halfSide, -halfSide, -halfSide, 1, 0);
-    vertex( halfSide,  halfSide, -halfSide, 1, 1);
-    vertex( halfSide,  halfSide,  halfSide, 0, 1);
+    this.pg.vertex( halfSide, -halfSide,  halfSide, 0, 0);
+    this.pg.vertex( halfSide, -halfSide, -halfSide, 1, 0);
+    this.pg.vertex( halfSide,  halfSide, -halfSide, 1, 1);
+    this.pg.vertex( halfSide,  halfSide,  halfSide, 0, 1);
 
     // -X "left" face
-    vertex(-halfSide, -halfSide, -halfSide, 0, 0);
-    vertex(-halfSide, -halfSide,  halfSide, 1, 0);
-    vertex(-halfSide,  halfSide,  halfSide, 1, 1);
-    vertex(-halfSide,  halfSide, -halfSide, 0, 1);
+    this.pg.vertex(-halfSide, -halfSide, -halfSide, 0, 0);
+    this.pg.vertex(-halfSide, -halfSide,  halfSide, 1, 0);
+    this.pg.vertex(-halfSide,  halfSide,  halfSide, 1, 1);
+    this.pg.vertex(-halfSide,  halfSide, -halfSide, 0, 1);
 
-    endShape();  
+    this.pg.endShape();
     
-    resetShader();
+    this.pg.resetShader();
   }
 }
