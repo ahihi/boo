@@ -107,10 +107,12 @@ void setup() {
 
   timeline = new Timeline(this, "data/sffm-g2.mp3");
   timeline.addScene(new CubeSpidersScene(16.0));
-  timeline.addScene(new WobblyGhostsScene(256.0));
-  timeline.addScene(new ExampleScene(256.0, false));
-  timeline.addScene(new SpiderWebScene(64.0));
   timeline.addScene(new ParticleGhostScene(64.0));
+  timeline.addScene(new FireScene(64.0));
+  timeline.addScene(new SpiderWebScene(64.0));
+  timeline.addScene(new MetaballScene(256.0));
+  timeline.addScene(new WobblyGhostsScene(256.0));
+  timeline.addScene(new ExampleScene(256.0, false));  
   
   frameRate(60);
   background(0);
