@@ -87,9 +87,6 @@ float beatsToSecs(float beats) {
 }
 
 // Constants
-int CANVAS_WIDTH = width;
-int CANVAS_HEIGHT = height;
-float ASPECT_RATIO = (float)width/height;
 float TEMPO = 76.5; // beats/minute
 float BEAT_DURATION = 60.0 / TEMPO; // seconds 
 float POSITION_OFFSET = -0.25*BEAT_DURATION; // seconds
@@ -102,6 +99,7 @@ boolean predelay = true; // are we still in the pre-delay period?
 
 void setup() {
   fullScreen(P3D);
+  //size(720, 405, P3D);
 
   timeline = new Timeline(this, "data/sffm-g2.mp3");
   timeline.addScene(new WobblyGhostsScene(256.0));
