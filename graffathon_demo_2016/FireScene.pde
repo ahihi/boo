@@ -17,10 +17,7 @@ class FireScene extends Scene {
     
     int numberOfFiresOnOneSide = 6;
     
-    for (int i = 0; i < numberOfFiresOnOneSide; i++) {
-      //fires.add(new ParticleFire(0, -width/4 - i * 150.0, height/3.0 * (i - 0.5 * numberOfFiresOnOneSide), 20 * i));
-      //fires.add(new ParticleFire(0, width/4 + i * 150.0, height/3.0 * (i - 0.5 * numberOfFiresOnOneSide), 20 * i));
-      
+    for (int i = 0; i < numberOfFiresOnOneSide; i++) {      
       fires.add(new ParticleFire(0, -width/4, 0.0, 50));
       fires.add(new ParticleFire(0, width/4, 0.0, 50));
     }
@@ -38,13 +35,6 @@ class FireScene extends Scene {
     ellipse(0,0,100,100);
     
     for (int i = fires.size() - 1; i >= 0; i--) {
-      /*if (i % 2 == 1) { 
-        fires.get(i).translate(fires.get(i).origonX + 0.001 * time, fires.get(i).origonY + 0.001 * time);
-      }
-      else {
-        fires.get(i).translate(fires.get(i).origonX - 0.001 * time, fires.get(i).origonY + 0.001 * time);
-      }*/
-      
       pushMatrix();
       
       float zTranslate = (((int)(i/2) - 3) * 500 + time * 0.5) % (fires.size() * 250);
