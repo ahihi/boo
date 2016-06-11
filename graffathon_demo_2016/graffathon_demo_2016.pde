@@ -37,7 +37,7 @@ class Timeline {
   }
   
   public void drawScene() {
-    float beats = 0.001 * song.position() / BEAT_DURATION;
+    float beats = 0.001 * (song.position() + POSITION_OFFSET * 1000.0) / BEAT_DURATION;
 
     Scene scene = null;
     boolean sceneChanged = false;
@@ -92,6 +92,7 @@ int CANVAS_HEIGHT = height;
 float ASPECT_RATIO = (float)width/height;
 float TEMPO = 76.5; // beats/minute
 float BEAT_DURATION = 60.0 / TEMPO; // seconds 
+float POSITION_OFFSET = -0.25*BEAT_DURATION; // seconds
 int SKIP_DURATION = round(4.0 * 1000.0 * BEAT_DURATION); // milliseconds
 float PREDELAY_DURATION = 0.0; // seconds
 
