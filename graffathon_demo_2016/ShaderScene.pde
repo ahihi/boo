@@ -14,8 +14,9 @@ class ShaderScene extends Scene {
   }
   
   public void setup() {
-    fill(255);
-    rectMode(CORNER);
+    this.pg.noStroke();
+    this.pg.fill(255);
+    this.pg.rectMode(CORNER);
     this.pg.shader(this.shader);
   }
   

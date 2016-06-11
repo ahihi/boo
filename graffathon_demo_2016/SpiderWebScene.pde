@@ -21,6 +21,10 @@ class SpiderWebScene extends Scene {
     fill(255);
     rectMode(CENTER);
     
+    camera();
+    perspective();
+    noLights();
+    
     metaballShader = loadShader("metaball_small.glsl");
     shader(metaballShader);
   }

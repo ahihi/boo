@@ -10,7 +10,11 @@ class ExampleScene extends Scene {
     resetShader();
     textSize(32);
     noStroke();
-    fill(255);    
+    fill(255);
+    
+    camera();
+    perspective();
+    noLights();
   }
   
   void draw(float beats) {

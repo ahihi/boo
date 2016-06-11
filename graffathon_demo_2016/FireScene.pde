@@ -14,6 +14,8 @@ class FireScene extends Scene {
     ellipseMode(CENTER);
     fill(255);
     lights();
+    camera();
+    perspective();
     
     fires = new ArrayList<ParticleFire>();
     graveStones = new ArrayList<GraveStone>();

@@ -14,6 +14,10 @@ class MetaballScene extends Scene {
     noStroke();
     fill(255);
     rectMode(CENTER);
+    
+    camera();
+    perspective();
+    noLights();
   }
   
   void draw(float beats) {
