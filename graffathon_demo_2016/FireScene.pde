@@ -1,6 +1,8 @@
 class FireScene extends Scene {
 
   ArrayList<ParticleFire> fires;
+  ArrayList<GraveStone> graveStones;
+  ArrayList<String> greets;
   
   public FireScene(float duration) {
     super(duration);
@@ -14,12 +16,25 @@ class FireScene extends Scene {
     lights();
     
     fires = new ArrayList<ParticleFire>();
+    graveStones = new ArrayList<GraveStone>();
+    greets = new ArrayList<String>();
     
     int numberOfFiresOnOneSide = 6;
     
     for (int i = 0; i < numberOfFiresOnOneSide; i++) {      
       fires.add(new ParticleFire(0, -width/4, 0.0, 50));
       fires.add(new ParticleFire(0, width/4, 0.0, 50));
+    }
+    
+    greets.add("1 LLLLL");
+    greets.add("2 PPPPP");
+    greets.add("3 777777");
+    greets.add("4 222222");
+    greets.add("5 AAAAAA");
+    greets.add("6 MMMMMM");
+    
+    for (int i = 0; i < greets.size(); i++) {
+      graveStones.add(new GraveStone(greets.get(i)));
     }
   }
   
@@ -31,9 +46,6 @@ class FireScene extends Scene {
     pushMatrix();
     translate(width/2, height/2, -0.5*width);
     
-    fill(255);
-    ellipse(0,0,100,100);
-    
     for (int i = fires.size() - 1; i >= 0; i--) {
       pushMatrix();
       
@@ -42,15 +54,17 @@ class FireScene extends Scene {
       translate(0, 0, zTranslate);
       fires.get(i).draw(beats);
       
-      fill(255);
-      rectMode(CENTER);
-      rect(0, 0, 30, 200);
-      rect(0, -40, 150, 30);
+      popMatrix();
+    }
+    
+    
+    for (int i = graveStones.size() - 1; i >= 0; i--) {
+      pushMatrix();
+  
+      float zTranslate = - i * 500 + time * 0.5;//(((int)i - graveStones.size()) * 500 + time * 0.5) % (graveStones.size() * 250);
       
-      fill(0);
-      textSize(10);
-      float textWidth = textWidth("Greets");
-      text("Greets", -textWidth/2.0, -40 + 5);
+      translate(0, 0, zTranslate);
+      graveStones.get(i).draw();
       
       popMatrix();
     }
