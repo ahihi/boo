@@ -426,7 +426,7 @@ void main() {
     mainImage(fragColor, fragCoord);
     
     vec3 tex_color = texture(in_image, fragCoord / iResolution.xy).xyz;
-    float blend = min(0.99, pow(iBeats / DURATION,mä, 0.5));
+    float blend = min(0.99, pow(iBeats / DURATION, 0.5));
     vec3 raw_color = blend * tex_color + (1.0-blend) * fragColor.xyz;
     out_color = vec4(raw_color, 1.0);
 }

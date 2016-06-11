@@ -11,6 +11,9 @@ class WobblyGhostsScene extends Scene {
   
   public void setup() {
     this.initialScene.setup();
+    noLights();
+    camera();
+    perspective();
   }
   
   public void draw(float beats) {
