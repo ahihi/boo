@@ -11,13 +11,13 @@ class CreditsScene extends Scene {
     this.font = loadFont("CharisSIL-72.vlw");
     this.text1 = "CODE\nahihi & Lumian";
     this.text2 = "MUSIC\nahihi";
-    this.margin = 100.0;
+    this.margin = 0.2*width;
   }
   
   public void setup() {
     this.ghostScene.setup();
     textFont(this.font);
-    textSize(18.0);
+    textSize(0.03 * width);
     textAlign(CENTER);
   }
   
@@ -80,10 +80,10 @@ class CreditsScene extends Scene {
     fill(255, 255.0*credits_wave);
     float heightOffset = -0.01*height;
     float width1 = textWidth(this.text1);
-    text(this.text1, margin + 0.5*width1, 0.5*height + heightOffset);
+    text(this.text1, margin + 0.0*width1, 0.5*height + heightOffset);
     
     float width2 = textWidth(this.text2);
-    text(this.text2, width - margin - 0.5*width2, 0.5*height + heightOffset);
+    text(this.text2, width - margin - 0.0*width2, 0.5*height + heightOffset);
     
     hint(ENABLE_DEPTH_TEST);
   }
