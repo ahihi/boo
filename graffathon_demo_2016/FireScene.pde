@@ -11,32 +11,35 @@ class FireScene extends Scene {
     
     fires = new ArrayList<ParticleFire>();
     graveStones = new ArrayList<GraveStone>();
-    
-    int numberOfFiresOnOneSide = 6;
-    
-    for (int i = 0; i < numberOfFiresOnOneSide; i++) {      
-      fires.add(new ParticleFire(0, -width/4, 0.0, 50));
-      fires.add(new ParticleFire(0, width/4, 0.0, 50));
-    }
-    
+        
     this.greets = new String[] {
       "Greets",
+      "Paraguay",
       "Peisik",
       "REN",
       "Epoch",
-      "pants^2",
-      "Paraguay",
       "Mercury",
+      "pants^2",
       "Kitai",
-      "firebug",
-      "sooda",
       "shieni",
+      "msqrt",
+      "sooda",
+      "shaiggon",
+      "firebug",
+      "Silphid & genie",
       "DOT",
       "Graffathon\n10.-12.6.2016"
     };
     
     for (int i = 0; i < greets.length; i++) {
       graveStones.add(new GraveStone(greets[i]));
+    }
+    
+    int numberOfFiresOnOneSide = this.greets.length;
+    
+    for (int i = 0; i < numberOfFiresOnOneSide; i++) {      
+      fires.add(new ParticleFire(0, -width/4, 0.0, 50));
+      fires.add(new ParticleFire(0, width/4, 0.0, 50));
     }
     
     this.font = loadFont("CharisSIL-72.vlw");
@@ -61,28 +64,28 @@ class FireScene extends Scene {
     
     int time = round(beatsToSecs(beats) * 1000.0);
     
+    hint(ENABLE_DEPTH_TEST);
     pushMatrix();
     translate(width/2, height/2, 0.0/*-0.5*width*/);
-    
-    for (int i = fires.size() - 1; i >= 0; i--) {
+        
+    for (int i = graveStones.size() - 1; i >= 0; i--) {
+      float zTranslate = - i * 500 + (beats + 1.25) * rate * 500.0;
+      
+      ParticleFire fire1 = fires.get(2*i);
+      ParticleFire fire2 = fires.get(2*i+1);
+      
       pushMatrix();
-      
-      //float zTranslate = (((int)(i/2) - 3) * 500 + time * 0.5) % (fires.size() * 250);
-      float zTranslate = (((int)(i/2) - 3) * 500 + beats * rate * 500.0 + 345.0) % (fires.size() * 250);
-      
+            
       translate(0, 0, zTranslate);
-      fires.get(i).draw(beats);
+      
+      fire1.draw(beats);
+      fire2.draw(beats);
       
       popMatrix();
-    }
-    
-    
-    for (int i = graveStones.size() - 1; i >= 0; i--) {
-      pushMatrix();
-  
-      float zTranslate = - i * 500 + (beats + 1.25) * rate * 500.0;//(((int)i - graveStones.size()) * 500 + time * 0.5) % (graveStones.size() * 250);
-      //float zTranslate = (((int)(i/2) - 3) * 500 + beats * rate * 500.0 + 345.0) % (fires.size() * 250);
       
+      
+      pushMatrix();
+        
       translate(0, 0, zTranslate);
       
       graveStones.get(i).draw();
@@ -93,6 +96,7 @@ class FireScene extends Scene {
     popMatrix();
     
     // clouds:
+    hint(DISABLE_DEPTH_TEST);
     pushMatrix();
     translate(width/2, height/2, 0);
     float cloudsFade = 0.0;
