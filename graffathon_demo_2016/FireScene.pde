@@ -1,6 +1,7 @@
 class FireScene extends Scene {
 
   ArrayList<ParticleFire> fires;
+  ArrayList<GraveStone> graveStones;
   String[] greets;
   PFont font;
   
@@ -9,7 +10,6 @@ class FireScene extends Scene {
     
     fires = new ArrayList<ParticleFire>();
     graveStones = new ArrayList<GraveStone>();
-    greets = new ArrayList<String>();
     
     int numberOfFiresOnOneSide = 6;
     
@@ -26,12 +26,18 @@ class FireScene extends Scene {
       "pants^2",
       "Paraguay",
       "Mercury",
+      "Kitai",
       "firebug",
       "sooda",
       "shieni",
-      "DOT"
+      "DOT",
+      "Graffathon\n10.-12.6.2016"
       // TODO
     };
+    
+    for (int i = 0; i < greets.length; i++) {
+      graveStones.add(new GraveStone(greets[i]));
+    }
     
     this.font = loadFont("CharisSIL-72.vlw");
   }
@@ -72,6 +78,9 @@ class FireScene extends Scene {
       pushMatrix();
   
       float zTranslate = - i * 500 + time * 0.5;//(((int)i - graveStones.size()) * 500 + time * 0.5) % (graveStones.size() * 250);
+      translate(0, 0, zTranslate);
+      
+      graveStones.get(i).draw();
       
       fill(0);
       textSize(10);
