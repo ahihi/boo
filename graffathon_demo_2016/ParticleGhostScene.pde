@@ -1,7 +1,7 @@
 class ParticleGhostScene extends Scene {
   
   ParticleGhost bigGhost;
-  PShader noiseShader;
+  //PShader noiseShader;
   
   public ParticleGhostScene(float duration) {
     super(duration);
@@ -20,38 +20,32 @@ class ParticleGhostScene extends Scene {
     noLights();
     
     bigGhost = new ParticleGhost(0, 0, 0, 200);
-    noiseShader = loadShader("hypno.glsl");
-    noiseShader.set("iResolution", width, height);
+    /*noiseShader = loadShader("noise.glsl");
+    noiseShader.set("iResolution", width, height);*/
   }
   
   void draw(float beats) {
-    clear();
+    background(0);
     
     int time = round(beatsToSecs(beats) * 1000.0);
     
-    
-    pushMatrix();
-    translate(width/2, height/2, -10);
-    scale(1.0);
-    
-    fill(10, 10, 10, 0.1);
-    rectMode(CENTER);
-    shader(noiseShader);
-    noiseShader.set("iGlobalTime", 0.5*beats);
-    noiseShader.set("iResolution", float(width), float(height));
-    
-    rect(0, 0, width, height);
-    resetShader();
-    popMatrix();
-    
     pushMatrix();
 
-    translate(width/2, height/2, 0);
+    translate(width/2, height/2, -0.5*width);
     scale(min(6.0, time * 0.0001));
 
     bigGhost.draw(beats);
     
-    
     popMatrix();
+    
+    /*pushMatrix();
+    translate(width/2, height/2, 0);
+    noiseShader.set("iGlobalTime", time*0.001);
+    shader(noiseShader);
+    fill(255, 255, 255, 255);
+    rectMode(CENTER);
+    rect(0, 0, width, height);
+    resetShader();
+    popMatrix();*/
   }
 }

@@ -34,7 +34,6 @@ class ParticleGhost {
     particleSystem.run();
     
     particleSystem.addParticle();
-    //particleSystem.addParticle();
     
     fill(150, 0, 0);
     

@@ -75,7 +75,7 @@ class Particle {
     float green = lifeTimePercentage * greenStart + (1.0 - lifeTimePercentage) * greenEnd;
     float blue = lifeTimePercentage * blueStart + (1.0 - lifeTimePercentage) * blueEnd;
     
-    fill(red, green, blue, lifeTimePercentage * 255);
+    fill(red, green, blue, lifeTime);
     
     ellipse(x, y, size * (lifeTime / 100.0), size * (lifeTime / 100.0));
   }

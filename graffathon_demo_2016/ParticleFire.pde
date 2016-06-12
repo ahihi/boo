@@ -33,7 +33,6 @@ class ParticleFire {
     particleSystem.run();
     
     particleSystem.addParticle();
-    particleSystem.addParticle();
     
     popMatrix();
   }
