@@ -13,7 +13,8 @@ class ParticleFire {
     origonY = origonYParam;
     amountOfParticles = amountOfParticlesParam;
     
-    particleSystem = new ParticleSystem(amountOfParticlesParam, origonXParam, origonYParam, size, 250.0, 150, 0.0, 150, 150, 0.0);
+    particleSystem = new ParticleSystem(amountOfParticlesParam, origonXParam, origonYParam, size, 200.0, 50, 0.0, 150, 150, 0.0);
+    particleSystem.alphaMax = 100.0;
   }
   
   public void translate(float x, float y) {
@@ -29,10 +30,9 @@ class ParticleFire {
     
     pushMatrix();
 
-    particleSystem.applyForce(new PVector(0.0, - (0.15 * sin(time) + 0.1)));
+    particleSystem.applyForce(new PVector(0.0, - (0.025 * sin(time) + 0.05)));
     particleSystem.run();
     
-    particleSystem.addParticle();
     particleSystem.addParticle();
     
     popMatrix();

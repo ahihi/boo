@@ -10,6 +10,8 @@ class ParticleSystem {
   float greenEnd = 255.0;
   float blueEnd = 255.0;
   
+  float alphaMax = 255.0;
+  
   int numberOfParticles;
   ArrayList<Particle> particles;
   
@@ -25,7 +27,9 @@ class ParticleSystem {
     numberOfParticles = numberOfParticlesParam;
     
     for (int i = 0; i < numberOfParticles; i++) {
-      particles.add(new Particle(originX, originY, size));
+      Particle particle = new Particle(originX, originY, size);
+      particles.add(particle);
+      particle.alphaMax = alphaMax;
     }
   }
   
@@ -67,7 +71,9 @@ class ParticleSystem {
   }  
 
   void addParticle() {
-    particles.add(new Particle(originX, originY, size, redStart, greenStart, blueStart, redEnd, greenEnd, blueEnd));
+    Particle particle = new Particle(originX, originY, size, redStart, greenStart, blueStart, redEnd, greenEnd, blueEnd);
+    particle.alphaMax = alphaMax;
+    particles.add(particle);
   }
   
   void translate(float x, float y) {  

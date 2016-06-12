@@ -4,6 +4,7 @@ class Particle {
   float y;
   PVector velocity;
   PVector acceleration;
+  float alphaMax = 255;
   
   float lifeTime = 100.0;
   float lifeTimeMax = 100.0;
@@ -71,11 +72,12 @@ class Particle {
 
   void render() {
     float lifeTimePercentage = lifeTime/lifeTimeMax;
+
     float red = lifeTimePercentage * redStart + (1.0 - lifeTimePercentage) * redEnd;
     float green = lifeTimePercentage * greenStart + (1.0 - lifeTimePercentage) * greenEnd;
     float blue = lifeTimePercentage * blueStart + (1.0 - lifeTimePercentage) * blueEnd;
     
-    fill(red, green, blue, lifeTimePercentage * 255);
+    fill(red, green, blue, lifeTimePercentage * alphaMax);
     
     ellipse(x, y, size * (lifeTime / 100.0), size * (lifeTime / 100.0));
   }

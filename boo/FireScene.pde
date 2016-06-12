@@ -38,8 +38,8 @@ class FireScene extends Scene {
     int numberOfFiresOnOneSide = this.greets.length;
     
     for (int i = 0; i < numberOfFiresOnOneSide; i++) {      
-      fires.add(new ParticleFire(0, -width/4, 0.0, 50));
-      fires.add(new ParticleFire(0, width/4, 0.0, 50));
+      fires.add(new ParticleFire(0, -width/4, 0.0, 40));
+      fires.add(new ParticleFire(0, width/4, 0.0, 40));
     }
     
     this.font = loadFont("CharisSIL-72.vlw");

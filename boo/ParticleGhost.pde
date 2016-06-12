@@ -49,8 +49,8 @@ class ParticleGhost {
     float eyebrowWidth = 5.0;
     float eyebrowHeight = 50.0;
     float rectangleRoundness = 7;
-    rect(leftEyeX - eyebrowWidth/2.0, particleSystem.originY - 25.0, eyebrowWidth, eyebrowHeight, rectangleRoundness);
-    rect(rightEyeX - eyebrowWidth/2.0, particleSystem.originY - 25.0, eyebrowWidth, eyebrowHeight, rectangleRoundness);
+    rect(leftEyeX - eyebrowWidth/2.0, particleSystem.originY, eyebrowWidth, eyebrowHeight, rectangleRoundness);
+    rect(rightEyeX - eyebrowWidth/2.0, particleSystem.originY, eyebrowWidth, eyebrowHeight, rectangleRoundness);
     
     fill(50, 0, 0);
     // eyes:
