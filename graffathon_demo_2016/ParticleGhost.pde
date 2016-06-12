@@ -27,7 +27,7 @@ class ParticleGhost {
     // big ghost
     float currentX = particleSystem.originX;
     float currentY = particleSystem.originY;
-    float newX = (400.0 * cos(time*0.001) - 200.0);
+    float newX = (400.0 * cos(time*0.001));
     float newY = (200.0 * sin(2 * time*0.001) - 100.0)/2.0;
     particleSystem.translate(newX, newY);
     particleSystem.applyForce(new PVector((currentX - newX) * 0.01, (currentY - newY) * 0.01));
