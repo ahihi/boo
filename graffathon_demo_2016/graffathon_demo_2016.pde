@@ -117,8 +117,8 @@ boolean predelay = true; // are we still in the pre-delay period?
 
 void setup() {
   //fullScreen(P3D);
-  //size(720, 405, P3D);
-  size(1920, 1080, P3D);
+  size(720, 405, P3D);
+  //size(1920, 1080, P3D);
 
   timeline = new Timeline(this, "data/sffm-g2.mp3");
   timeline.addScene(new SpiderWebScene(32.0));
@@ -128,6 +128,7 @@ void setup() {
   timeline.addScene(new MetaballScene(32.0));
   timeline.addScene(new FireScene(32.0));
   timeline.addScene(new ExampleScene(32.0, false));
+  timeline.addScene(new CreditsScene(64.0));
   
   frameRate(60);
   background(0);
@@ -168,7 +169,7 @@ void draw() {
     
     // Predelay ended, start the song
     predelay = false;
-    float offset = 32.0 + 64.0 + 34.0 + 64.0 + 32.0 - 8.0;
+    float offset = 0.0;//32.0 + 64.0 + 34.0 + 64.0 + 32.0 + 32.0 + 32.0;
     timeline.song.play(round(offset * 1000.0 * BEAT_DURATION));
   }
   
