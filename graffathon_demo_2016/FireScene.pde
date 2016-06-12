@@ -20,16 +20,19 @@ class FireScene extends Scene {
     
     this.greets = new String[] {
       "Greets",
+      "Paraguay",
       "Peisik",
       "REN",
       "Epoch",
-      "pants^2",
-      "Paraguay",
       "Mercury",
+      "pants^2",
       "Kitai",
-      "firebug",
-      "sooda",
       "shieni",
+      "msqrt",
+      "sooda",
+      "shaiggon",
+      "firebug",
+      "Silphid & genie",
       "DOT",
       "Graffathon\n10.-12.6.2016"
     };
