@@ -17,14 +17,14 @@ uniform sampler2D in_image;
 uniform sampler2D in_image1;
 out vec4 out_color;
 
-vec2 pow(vec2 v, float e) {
+vec2 my_pow(vec2 v, float e) {
   return vec2(pow(v.x, e), pow(v.y, e));
 }
 
 void main() {
     vec2 fragCoord = gl_FragCoord.xy;
     
-    vec2 tex_coord = (pow(fragCoord / iResolution.xy * 2.0 - 1.0, 1.0) + 1.0) / 2.0;
+    vec2 tex_coord = (my_pow(fragCoord / iResolution.xy * 2.0 - 1.0, 1.0) + 1.0) / 2.0;
     
     vec3 tex_color = texture(in_image, tex_coord).xyz;
     vec3 tex_color1 = texture(in_image1, tex_coord).xyz;
