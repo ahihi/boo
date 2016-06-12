@@ -4,6 +4,7 @@ class FireScene extends Scene {
   ArrayList<GraveStone> graveStones;
   String[] greets;
   PFont font;
+  PShader cloudShader;
   
   public FireScene(float duration) {
     super(duration);
@@ -48,6 +49,9 @@ class FireScene extends Scene {
     fill(255);
     lights();    
     textFont(this.font);
+    
+    cloudShader = loadShader("clouds.glsl");
+    cloudShader.set("iResolution", (float)width, (float)height);
   }
   
   void draw(float beats) {
@@ -88,5 +92,19 @@ class FireScene extends Scene {
     
     popMatrix();
     
+    // clouds:
+    pushMatrix();
+    translate(width/2, height/2, 0);
+    float cloudsFade = 0.0;
+    cloudShader.set("iBeats", beats);
+    cloudShader.set("iGlobalTime", time * 0.001);
+    cloudShader.set("iFade", cloudsFade);
+    
+    shader(cloudShader);
+    fill(100, 100, 100, 0.7);
+    rectMode(CENTER);
+    rect(0, 0, width, height);
+    resetShader();
+    popMatrix();
   }
 }
