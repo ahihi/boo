@@ -14,6 +14,10 @@ class ParticleGhostScene extends Scene {
     ellipseMode(CENTER);
     fill(255);
     
+    camera();
+    perspective();
+    noLights();
+    
     bigGhost = new ParticleGhost(0, 0, 0, 200);
   }
   
