@@ -32,7 +32,6 @@ class FireScene extends Scene {
       "shieni",
       "DOT",
       "Graffathon\n10.-12.6.2016"
-      // TODO
     };
     
     for (int i = 0; i < greets.length; i++) {
@@ -77,22 +76,13 @@ class FireScene extends Scene {
     for (int i = graveStones.size() - 1; i >= 0; i--) {
       pushMatrix();
   
-      float zTranslate = - i * 500 + time * 0.5;//(((int)i - graveStones.size()) * 500 + time * 0.5) % (graveStones.size() * 250);
+      float zTranslate = - i * 500 + (beats + 1.25) * rate * 500.0;//(((int)i - graveStones.size()) * 500 + time * 0.5) % (graveStones.size() * 250);
+      //float zTranslate = (((int)(i/2) - 3) * 500 + beats * rate * 500.0 + 345.0) % (fires.size() * 250);
+      
       translate(0, 0, zTranslate);
       
       graveStones.get(i).draw();
-      
-      fill(0);
-      textSize(10);
-      
-      int text_i = floor(rate * beats);
-      String greet_text = text_i < this.greets.length
-        ? this.greets[text_i].toUpperCase()
-        : "";
-      
-      float textWidth = textWidth(greet_text);
-      text(greet_text, -textWidth/2.0, -40 + 5);
-      
+            
       popMatrix();
     }
     
