@@ -46,7 +46,7 @@ class CubeSpidersScene extends Scene {
         1.4 * PI
       ),
       new Spider(
-        new PVector(0.4, -0.7, -1.7),
+        new PVector(0.4, -0.45, -1.7),
         0.5 * PI
       ),
       new Spider(
