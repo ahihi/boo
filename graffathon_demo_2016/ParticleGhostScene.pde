@@ -8,6 +8,8 @@ class ParticleGhostScene extends Scene {
   
   void setup() {
     resetShader();
+    camera();
+    perspective();
     noStroke();
     ellipseMode(CENTER);
     fill(255);

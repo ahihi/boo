@@ -86,6 +86,20 @@ float scale(float l0, float r0, float l1, float r1, float x) {
 	return (x - l0) / (r0 - l0) * (r1 - l1) + l1;
 }
 
+float sin_in_out(float wave) {
+  return (sin(wave * PI - 0.5*PI) + 1.0) * 0.5;
+}
+
+float sin_in_out(float wave, float exponent) {
+  float sine = sin(wave * PI - 0.5*PI);
+  float sign = sine < 0.0 ? -1.0 : 1.0;
+  return (sign * pow(abs(sine), exponent) + 1.0) * 0.5;
+}
+
+float inv_pow(float b, float e) {
+  return 1.0 - pow(1.0-b, e);
+}
+
 float beatsToSecs(float beats) {
   return beats * BEAT_DURATION;
 }
@@ -102,20 +116,18 @@ Timeline timeline;
 boolean predelay = true; // are we still in the pre-delay period?
 
 void setup() {
-  fullScreen(P3D);
+  //fullScreen(P3D);
   //size(720, 405, P3D);
+  size(1920, 1080, P3D);
 
   timeline = new Timeline(this, "data/sffm-g2.mp3");
-
-
-  timeline.addScene(new CubeSpidersScene(16.0));
-  timeline.addScene(new WobblyGhostsScene(256.0));
-  timeline.addScene(new ParticleGhostScene(64.0));
-  timeline.addScene(new FireScene(64.0));
-  timeline.addScene(new ParticleGhostScene(64.0));
-  timeline.addScene(new SpiderWebScene(64.0));
-  timeline.addScene(new MetaballScene(256.0));
-  timeline.addScene(new ExampleScene(256.0, false));  
+  timeline.addScene(new SpiderWebScene(32.0));
+  timeline.addScene(new CubeSpidersScene(64.0));
+  timeline.addScene(new ParticleGhostScene(32.0 + 2.0));
+  timeline.addScene(new WobblyGhostsScene(64.0));
+  timeline.addScene(new MetaballScene(32.0));
+  timeline.addScene(new FireScene(32.0));
+  timeline.addScene(new ExampleScene(32.0, false));
   
   frameRate(60);
   background(0);
@@ -156,7 +168,7 @@ void draw() {
     
     // Predelay ended, start the song
     predelay = false;
-    float offset = 0.0;
+    float offset = 32.0 + 64.0 + 34.0 + 64.0 + 32.0 - 8.0;
     timeline.song.play(round(offset * 1000.0 * BEAT_DURATION));
   }
   
