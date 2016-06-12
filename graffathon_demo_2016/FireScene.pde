@@ -67,13 +67,9 @@ class FireScene extends Scene {
     hint(ENABLE_DEPTH_TEST);
     pushMatrix();
     translate(width/2, height/2, 0.0/*-0.5*width*/);
-    
-    for (int i = fires.size() - 1; i >= 0; i--) {
-    }
-    
-    
+        
     for (int i = graveStones.size() - 1; i >= 0; i--) {
-      float zTranslate = - i * 500 + (beats + 1.25) * rate * 500.0;//(((int)i - graveStones.size()) * 500 + time * 0.5) % (graveStones.size() * 250);
+      float zTranslate = - i * 500 + (beats + 1.25) * rate * 500.0;
       
       ParticleFire fire1 = fires.get(2*i);
       ParticleFire fire2 = fires.get(2*i+1);
