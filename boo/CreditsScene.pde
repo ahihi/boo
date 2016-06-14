@@ -1,24 +1,40 @@
 class CreditsScene extends Scene {
   private ShaderScene ghostScene;
-  private PFont font;
   private String text1;
   private String text2;
   private float margin;
-  
+  private PGraphics creditsG;
+    private PFont font;
+
   public CreditsScene(float duration) {
     super(duration);
     this.ghostScene = new ShaderScene(duration, "credits-ghost.frag");
-    this.font = loadFont("CharisSIL-72.vlw");
     this.text1 = "CODE\nahihi & Lumian";
     this.text2 = "MUSIC\nahihi";
     this.margin = 0.2*width;
+    this.creditsG = createGraphics(width, height, P3D);
+    this.font = loadFont("CharisSIL-72.vlw");
+
+    this.creditsG.beginDraw();
+    this.creditsG.background(0.0, 0.0);
+    this.creditsG.textFont(this.font);
+    this.creditsG.textSize(0.03 * width);
+    this.creditsG.textAlign(CENTER);
+    this.creditsG.noStroke();
+    this.creditsG.fill(255);
+    
+    this.creditsG.clear();
+    float heightOffset = -0.01*height;
+    float width1 = this.creditsG.textWidth(this.text1);
+    this.creditsG.text(this.text1, margin + 0.0*width1, 0.5*height + heightOffset);
+    
+    float width2 = this.creditsG.textWidth(this.text2);
+    this.creditsG.text(this.text2, width - margin - 0.0*width2, 0.5*height + heightOffset);
+    this.creditsG.endDraw();
   }
   
   public void setup() {
     this.ghostScene.setup();
-    textFont(this.font);
-    textSize(0.03 * width);
-    textAlign(CENTER);
   }
   
   public void draw(float beats) {
@@ -67,24 +83,15 @@ class CreditsScene extends Scene {
       fade = scale(b_fade, this.duration, 0.0, 1.0, beats);
     }
     fade = pow(fade, 2.0);
-    
-    hint(DISABLE_DEPTH_TEST);
+        
     fill(255);
     shader(this.ghostScene.shader);
     this.ghostScene.shader.set("sat", sat_wave);
     this.ghostScene.shader.set("kick_wave", kick_wave);
     this.ghostScene.shader.set("fade", fade);
+    this.ghostScene.shader.set("credits", this.creditsG);
+    this.ghostScene.shader.set("credits_wave", credits_wave);
     this.ghostScene.draw(beats);
     resetShader();
-    
-    fill(255, 255.0*credits_wave);
-    float heightOffset = -0.01*height;
-    float width1 = textWidth(this.text1);
-    text(this.text1, margin + 0.0*width1, 0.5*height + heightOffset);
-    
-    float width2 = textWidth(this.text2);
-    text(this.text2, width - margin - 0.0*width2, 0.5*height + heightOffset);
-    
-    hint(ENABLE_DEPTH_TEST);
   }
 }

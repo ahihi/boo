@@ -5,6 +5,10 @@ import ddf.minim.analysis.*;
 import ddf.minim.ugens.*;
 import ddf.minim.effects.*;
 
+boolean capture = false;
+String captureDir = "boo-frames";
+float msecs = 0.0;
+
 abstract class Scene {
   public float duration; // scene duration in beats
   
@@ -37,7 +41,9 @@ class Timeline {
   }
   
   public void drawScene() {
-    float beats = 0.001 * (song.position() + POSITION_OFFSET * 1000.0) / BEAT_DURATION;
+    float beats = capture
+      ? 0.001 * msecs / BEAT_DURATION
+      : 0.001 * (song.position() + POSITION_OFFSET * 1000.0) / BEAT_DURATION;
 
     Scene scene = null;
     boolean sceneChanged = false;
@@ -116,9 +122,9 @@ Timeline timeline;
 boolean predelay = true; // are we still in the pre-delay period?
 
 void setup() {
-  fullScreen(P3D);
+  //fullScreen(P3D);
   //size(720, 405, P3D);
-  //size(1920, 1080, P3D);
+  size(1920, 1080, P3D);
 
   timeline = new Timeline(this, "data/sffm-g2.mp3");
   timeline.addScene(new SpiderWebScene(32.0));
@@ -169,9 +175,21 @@ void draw() {
     
     // Predelay ended, start the song
     predelay = false;
-    float offset = 0.0;//32.0 + 64.0 + 34.0 + 64.0 + 32.0 + 32.0 + 32.0 - 2.0;
+    float offset = 0.0;/*32.0 + 64.0 + 34.0 + 64.0 + 32.0 + 32.0 + 32.0 - 2.0*/;
+    if(capture) {
+      timeline.song.setGain(-1000.0);
+    }
     timeline.song.play(round(offset * 1000.0 * BEAT_DURATION));
   }
   
+  if(capture && msecs > 290196.0) {
+    exit();
+  }
+  
   timeline.drawScene();
+  
+  if(capture) {
+    saveFrame(captureDir + "/frame-########.png");
+    msecs += 1000.0/60.0;
+  }
 }

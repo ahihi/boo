@@ -16,6 +16,8 @@ uniform float iBeats;
 uniform float sat;
 uniform float kick_wave;
 uniform float fade;
+uniform sampler2D credits;
+uniform float credits_wave;
 
 out vec4 out_color;
 
@@ -344,6 +346,7 @@ void main() {
     vec2 fragCoord = gl_FragCoord.xy;
     mainImage(fragColor, fragCoord);
     
-    vec3 raw_color = fragColor.xyz;
+    vec4 credits_color = texture(credits, gl_FragCoord.xy/iResolution);
+    vec3 raw_color = mix(fragColor.xyz, credits_color.xyz, credits_color.w * credits_wave);
     out_color = vec4(raw_color, 1.0);
 }
